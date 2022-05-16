@@ -1,0 +1,79 @@
+{% extends 'basef.html.twig' %}
+
+{% block title %}Reservation index{% endblock %}
+
+{% block body %}
+    <h1>Reservation index</h1>
+    <form>
+        <div>
+            <table>
+                <div>
+                    <tr>
+                        <td><input type="text" id="search" class="form-control" placeholder="Rechercher"></td>
+                        <td><i></i></td>
+                    </tr>
+                </div>
+            </table>
+        </div>
+    </form>
+    <script src="{{ asset('jquery.min.js') }}"></script>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Coach</th>
+                <th>Date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.idCoach }}</td>
+                <td>{{ reservation.date ? reservation.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_reservation_show', {'idReser': reservation.idReser}) }}">show</a>
+                    <a href="{{ path('app_reservation_edit', {'idReser': reservation.idReser}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        <script>
+            $(document).ready(function(){
+                $('#search').keyup(function(){
+                    search_table($(this).val());
+                });
+                function search_table(value){
+                    $('#tableac tbody tr').each(function(){
+                        var found = 'false';
+                        $(this).each(function(){
+                            if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)
+                            {
+                                found = 'true';
+                            }
+                        });
+
+                        if(found == 'true')
+                        {
+                            $(this).show();
+
+                        }
+                        else
+                        {
+                            $(this).hide();
+
+                        }
+                    });
+                }
+            });
+        </script>
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reservation_new') }}">Create new</a>
+    <a href="{{ path('app_reservation_liste') }}">Imprimer</a>
+    {{ knp_pagination_render(reservations) }}
+{% endblock %}
